@@ -37,12 +37,12 @@ public class MessageItemController {
     }
 
     @GetMapping("/add")
-    public String addForm(Model model, Item item) {
+    public String addForm(Item item) {
         return "message/addForm";
     }
 
     @PostMapping("/add")
-    public String addItem(@ModelAttribute Item item, RedirectAttributes redirectAttributes) {
+    public String addItem(Item item, RedirectAttributes redirectAttributes) {
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
         redirectAttributes.addAttribute("status", true);
@@ -57,7 +57,7 @@ public class MessageItemController {
     }
 
     @PostMapping("/{itemId}/edit")
-    public String edit(@PathVariable("itemId") Long itemId, @ModelAttribute Item item) {
+    public String edit(@PathVariable("itemId") Long itemId, Item item) {
         itemRepository.update(itemId, item);
         return "redirect:/message/items/{itemId}";
     }
