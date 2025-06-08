@@ -7,6 +7,10 @@
         .container {
             max-width: 560px;
         }
+		.fielderror {
+			border-color: red;
+			background-color: #FFF0F0;
+		}
     </style>
 </head>
 
@@ -19,21 +23,38 @@
 
         <form th:action="@{/validation/v1/items/add}" th:object="${item}" method="post">
 
-			<div>
-				<label for="itemName" th:text=#{label.item.itemName}>상품명</label>
-				<input type="text" id="itemName" th:field="*{itemName}" class="form-control"
-					th:placeholder="#{placeholder.item.itemName}">
+			<div th:if="${errors?.containsKey('globalError')}">
+				<p class="field-error" th:text="${errors['globalError']}">전체 오류 메세지</p>
 			</div>
 			
 			<div>
-				<label for="price" th:text=#{label.item.price}>가격</label>
-				<input type="text" id="price" th:field="*{price}" class="form-control" 
-					th:placeholder="#{placeholder.item.price}">
+			    <label for="itemName" th:text="#{label.item.itemName}">상품명</label>
+			    <input type="text"
+			           id="itemName"
+			           th:field="*{itemName}"
+			           class="form-control"
+			           th:placeholder="#{placeholder.item.itemName}"
+			           th:classappend="${errors?.containsKey('itemName')} ? ' fielderror' : ''">
 			</div>
+
 			<div>
-				<label for="quantity" th:text=#{label.item.quantity}>수량</label>
-				<input type="text" id="quantity" th:field="*{quantity}" class="form-control"
-					th:placeholder="#{placeholder.item.quantity}">
+			    <label for="price" th:text="#{label.item.price}">가격</label>
+			    <input type="text"
+			           id="price"
+			           th:field="*{price}"
+			           class="form-control"
+			           th:placeholder="#{placeholder.item.price}"
+			           th:classappend="${errors?.containsKey('price')} ? ' fielderror' : ''">
+			</div>
+
+			<div>
+			    <label for="quantity" th:text="#{label.item.quantity}">수량</label>
+			    <input type="text"
+			           id="quantity"
+			           th:field="*{quantity}"
+			           class="form-control"
+			           th:placeholder="#{placeholder.item.quantity}"
+			           th:classappend="${errors?.containsKey('quantity')} ? ' fielderror' : ''">
 			</div>
 
             <hr class="my-4">

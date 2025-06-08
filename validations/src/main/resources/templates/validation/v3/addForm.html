@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+		.field-error {
+			border-color: red;
+			background-color: #FFF0F0;
+		}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="py-5 text-center">
+            <h2 th:text=#{page.addItem}>상품 등록 폼</h2>  
+        </div>
+
+        <form th:action="@{/validation/v3/items/add}" th:object="${item}" method="post">
+
+			<!-- 
+				#fields : #fields는 Spring의 BindingResult 객체에 접근하는 Thymeleaf 
+					유틸리티 객체이다. Spring은 검증 결과(BindingResult)를 뷰에 전달하면서,
+					내부적으로 #fields라는 이름으로 접근할 수 있게 해준다. 
+			-->
+			<div th:if="${#fields.hasGlobalErrors()}">
+				<p class="field-error"
+				   th:each="error : ${#fields.globalErrors()}"
+				   th:text="${error}">글로벌 오류 메세지
+				</p>
+			</div>
+						
+			<div>
+				<label for="itemName" th:text="#{label.item.itemName}"></label>
+				<input type="text" 
+					   id="itemName"
+					   class="form-control"
+					   th:field="*{itemName}"
+					   th:errorclass="field-error"
+					   th:placeholder="#{placeholder.item.itemName}">
+				<!-- th:errorclass : th:field와 같이 사용할 때, 해당 필드에 오류가 있으면
+						지정한 클래스를 자동으로 추가한다. 보통 CSS로 오류 스타일을 주기 위해 사용된다.
+				 -->
+					   
+				<!-- 
+					th:errors : 해당 필드에 오류가 있는 경우에 태그를 출력한다.
+						즉, th:if="${#fields.hasErrors('itemName')}" +
+						th:text="${#fields.errors('itemName')}" 
+				-->
+			 	<div class="field-error" th:errors="*{itemName}">
+					상품명 오류
+				</div>
+			</div>
+
+			<div>
+			    <label for="price" th:text="#{label.item.price}">가격</label>
+			    <input type="text"
+			           id="price"
+					   class="form-control"
+			           th:field="*{price}"
+					   th:errorclass="field-error"
+			           th:placeholder="#{placeholder.item.price}">
+				<div class="field-error" th:errors="*{price}">
+					가격 오류
+				</div>  
+		    </div>
+
+			<div>
+			    <label for="quantity" th:text="#{label.item.quantity}">수량</label>
+			    <input type="text"
+			           id="quantity"
+			           class="form-control"
+					   th:field="*{quantity}"
+					   th:errorclass="field-error"
+			           th:placeholder="#{placeholder.item.quantity}">
+			 	<div class="field-error" th:errors="*{quantity}">
+					수량 오류
+				</div>
+			</div>
+
+            <hr class="my-4">
+
+            <div class="row">
+                <div class="col">
+                    <button type="submit"
+							class="w-100 btn btn-primary btn-lg" 
+                            th:text=#{button.register}>등록</button>
+                </div>
+                <div class="col">
+                    <button type="button" 
+							class="w-100 btn btn-secondary btn-lg"
+                            th:onclick="|location.href='@{/validation/v3/items}'|"
+                            th:text=#{button.cancel}>취소</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</body>
+</html>
