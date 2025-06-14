@@ -10,7 +10,6 @@ import hello.itemservice.domain.item.Item;
 @Component
 public class ItemValidator implements Validator {
 
-	@Override
 	public boolean supports(Class<?> clazz) {
 		// item == clazz == subItem
 		return Item.class.isAssignableFrom(clazz);

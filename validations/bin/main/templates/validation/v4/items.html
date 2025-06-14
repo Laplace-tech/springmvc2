@@ -17,7 +17,7 @@
 
 		<div class="mb-3 text-end">
 			<a class="btn btn-primary"
-			   th:href="@{/validation/v1/items/add}"
+			   th:href="@{/validation/v4/items/add}"
 			   th:text="#{page.addItem}">상품 등록 폼</a>
 		</div>
 		
@@ -36,11 +36,11 @@
 				<tbody>
 					<tr th:each="item : ${itemList}">
 						<td>
-							<a th:href="@{/validation/v1/items/{itemId}(itemId=${item.id})}" 
+							<a th:href="@{/validation/v4/items/{itemId}(itemId=${item.id})}" 
 							   th:text="${item.id}">ID</a>
 						</td>
 						<td>
-							<a th:href="@{/validation/v1/items/{itemId}(itemId=${item.id})}" 
+							<a th:href="@{/validation/v4/items/{itemId}(itemId=${item.id})}" 
 							   th:text="${item.itemName}">이름</a>
 						</td>
 						<td th:text="${item.price}">가격</td>
