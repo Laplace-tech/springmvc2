@@ -23,7 +23,6 @@ public class MemberRepository {
     public Member save(Member member) {
         member.setId(++sequence);
         store.put(member.getId(), member);
-        log.info("save: member = {}", member);
         return member;
     }
 
@@ -32,7 +31,6 @@ public class MemberRepository {
      */
     public Member findById(Long id) {
         Member member = store.get(id);
-        log.debug("findById: id = {}, member = {}", id, member);
         return member;
     }
 
@@ -43,7 +41,6 @@ public class MemberRepository {
         Optional<Member> member = store.values().stream()
             .filter(m -> m.getLoginId().equals(loginId))
             .findAny();
-        log.debug("findByLoginId: loginId = {}, found = {}", loginId, member.isPresent());
         return member;
     }
 
@@ -52,7 +49,6 @@ public class MemberRepository {
      */
     public List<Member> findAll() {
         List<Member> allMembers = new ArrayList<>(store.values());
-        log.debug("findAll: count = {}", allMembers.size());
         return allMembers;
     }
 
@@ -61,6 +57,5 @@ public class MemberRepository {
      */
     public void clearStore() {
         store.clear();
-        log.info("clearStore: store cleared");
     }
 }

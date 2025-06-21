@@ -18,41 +18,27 @@ public class ItemRepository {
     public Item save(Item item) {
         item.setId(++sequence);
         store.put(item.getId(), item);
-        log.info("Item saved: {}", item);
         return item;
     }
 
     public Item findById(Long id) {
         Item item = store.get(id);
-        if (item != null) {
-            log.info("Item found: id={}, item={}", id, item);
-        } else {
-            log.warn("Item not found: id={}", id);
-        }
         return item;
     }
 
     public List<Item> findAll() {
         List<Item> items = new ArrayList<>(store.values());
-        log.info("findAll called: total {} items", items.size());
         return items;
     }
 
-    public void update(Long itemId, Item updateParam) {
-        Item findItem = findById(itemId);
-        if (findItem != null) {
-            log.info("Before update: {}", findItem);
-            findItem.setItemName(updateParam.getItemName());
-            findItem.setPrice(updateParam.getPrice());
-            findItem.setQuantity(updateParam.getQuantity());
-            log.info("After update: {}", findItem);
-        } else {
-            log.warn("Update failed: item not found with id={}", itemId);
-        }
-    }
+	public void update(Long itemId, Item updateParam) {
+		Item findItem = findById(itemId);
+		findItem.setItemName(updateParam.getItemName());
+		findItem.setPrice(updateParam.getPrice());
+		findItem.setQuantity(updateParam.getQuantity());
+	}
 
     public void clearStore() {
         store.clear();
-        log.info("Item store cleared");
     }
 }

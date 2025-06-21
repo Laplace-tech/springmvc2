@@ -22,16 +22,6 @@ public class Item {
 		this.itemName = itemName;
 		this.price = price;
 		this.quantity = quantity;
-		log.info("Item created: itemName={}, price={}, quantity={}", itemName, price, quantity);
 	}
 
-	public void changePrice(Integer newPrice) {
-		log.info("Changing price: from {} to {}", this.price, newPrice);
-		this.price = newPrice;
-	}
-
-	public void changeQuantity(Integer newQuantity) {
-		log.info("Changing quantity: from {} to {}", this.quantity, newQuantity);
-		this.quantity = newQuantity;
-	}
 }

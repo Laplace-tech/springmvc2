@@ -31,7 +31,6 @@ public class ItemController {
 	@GetMapping
 	public String showItemList(Model model) {
 		List<Item> itemList = itemRepository.findAll();
-		log.info("상품 목록 조회, itemCount={}", itemList.size());
 		model.addAttribute("itemList", itemList);
 		return "items/items";
 	}
@@ -39,14 +38,12 @@ public class ItemController {
 	@GetMapping("/{itemId}")
 	public String showItemDetail(@PathVariable("itemId") Long itemId, Model model) {
 		Item item = itemRepository.findById(itemId);
-		log.info("상품 상세 조회, itemId={}, item={}", itemId, item);
 		model.addAttribute("item", item);
 		return "items/item";
 	}
 
 	@GetMapping("/add")
 	public String addForm(ItemSaveForm saveForm) {
-		log.info("상품 등록 폼 요청");
 		return "items/addForm";
 	}
 
@@ -54,18 +51,14 @@ public class ItemController {
 	public String addItem(@Validated ItemSaveForm saveForm, BindingResult bindingResult,
 			RedirectAttributes redirectAttributes) {
 
-		log.info("상품 등록 요청: saveForm={}", saveForm);
-
 		validateTotalPrice(saveForm.getPrice(), saveForm.getQuantity(), bindingResult);
 
 		if (bindingResult.hasErrors()) {
-			log.warn("상품 등록 검증 오류: {}", bindingResult);
 			return "items/addForm";
 		}
 
 		Item newItem = ToItem(saveForm);
 		Item savedItem = itemRepository.save(newItem);
-		log.info("상품 등록 성공: savedItem={}", savedItem);
 
 		redirectAttributes.addAttribute("itemId", savedItem.getId());
 		redirectAttributes.addAttribute("status", true);
@@ -75,7 +68,6 @@ public class ItemController {
 	@GetMapping("/{itemId}/edit")
 	public String editForm(@PathVariable("itemId") Long itemId, Model model) {
 		ItemUpdateForm editForm = toForm(itemRepository.findById(itemId));
-		log.info("상품 수정 폼 요청: itemId={}, editForm={}", itemId, editForm);
 		model.addAttribute("item", editForm);
 		return "items/editForm";
 	}
@@ -84,18 +76,14 @@ public class ItemController {
 	public String edit(@PathVariable("itemId") Long itemId, @ModelAttribute("item") @Validated ItemUpdateForm editForm,
 			BindingResult bindingResult) {
 
-		log.info("상품 수정 요청: itemId={}, editForm={}", itemId, editForm);
-
 		validateTotalPrice(editForm.getPrice(), editForm.getQuantity(), bindingResult);
 
 		if (bindingResult.hasErrors()) {
-			log.warn("상품 수정 검증 오류: {}", bindingResult);
 			return "items/editForm";
 		}
 
 		Item updatedItem = ToItem(editForm);
 		itemRepository.update(itemId, updatedItem);
-		log.info("상품 수정 성공: itemId={}, updatedItem={}", itemId, updatedItem);
 		return "redirect:/items/{itemId}";
 	}
 
@@ -104,7 +92,6 @@ public class ItemController {
 			int resultPrice = price * quantity;
 			if (resultPrice < 10_000) {
 				bindingResult.reject("totalPriceMin", new Object[] { 10_000, resultPrice }, null);
-				log.warn("복합 검증 실패: 가격*수량={} < 10000", resultPrice);
 			}
 		}
 	}
