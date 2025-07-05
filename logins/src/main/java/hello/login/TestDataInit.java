@@ -2,15 +2,13 @@ package hello.login;
 
 import org.springframework.stereotype.Component;
 
-import hello.login.domain.item.Item;
 import hello.login.domain.item.ItemRepository;
-import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
+import hello.login.web.item.form.ItemSaveForm;
+import hello.login.web.member.form.MemberForm;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TestDataInit {
@@ -18,20 +16,41 @@ public class TestDataInit {
 	private final ItemRepository itemRepository;
 	private final MemberRepository memberRepository;
 
-	/**
-	 * 테스트용 데이터 추가
-	 */
 	@PostConstruct
-	public void init() {
-		itemRepository.save(new Item("itemA", 10000, 10));
-		itemRepository.save(new Item("itemB", 20000, 20));
-
-		Member member1 = new Member("Anna", "Anna", "28482848a");
-		Member member2 = new Member("Erma", "Erma", "28482848a");
-		Member member3 = new Member("Romi", "Romi", "28482848a");
-
-		memberRepository.save(member1);
-		memberRepository.save(member2);
-		memberRepository.save(member3);
+	public void initTestData() {	
+		initItems();
+		initMembers();
 	}
+	
+	private void initItems() {
+		ItemSaveForm item1 = new ItemSaveForm();
+		item1.setItemName("연필");
+		item1.setPrice(3000);
+		item1.setQuantity(10);
+		
+		ItemSaveForm item2 = new ItemSaveForm();
+		item2.setItemName("공책");
+		item2.setPrice(5000);
+		item2.setQuantity(30);
+		
+		itemRepository.saveItem(item1);
+		itemRepository.saveItem(item2);
+	}
+	
+	private void initMembers() {
+		MemberForm member1 = new MemberForm();
+		member1.setLoginId("anna");
+		member1.setPassword("2848");
+		member1.setName("안나리");
+
+		MemberForm member2 = new MemberForm();
+		member2.setLoginId("erma");
+		member2.setPassword("2848");
+		member2.setName("엘마");
+		
+        memberRepository.saveMember(member1);
+        memberRepository.saveMember(member2);
+	}
+	
+	
 }

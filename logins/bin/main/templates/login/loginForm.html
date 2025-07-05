@@ -22,8 +22,9 @@
 		
 		<form th:action="@{/login}" th:object="${loginForm}" method="post">
 			
-			<!-- ✅ redirectURL 값 hidden으로 넘기기 -->
+			<!--
 			<input type="hidden" name="redirectURL" th:value="${param.redirectURL}" />
+			-->
 			
 			<div th:if="${#fields.hasGlobalErrors()}">
 				<p class="field-error" 

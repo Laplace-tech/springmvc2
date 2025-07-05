@@ -22,11 +22,11 @@ public class HomeController {
 	public String homeLoginV3Spring(
 			@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) 
 			Member loginMember, Model model) {
-		
-		if(loginMember == null) {
+
+		if (loginMember == null) {
 			return "home";
 		}
-		
+
 		model.addAttribute("member", loginMember);
 		return "loginHome";
 	}
@@ -46,31 +46,31 @@ public class HomeController {
 //		model.addAttribute("member", loginMember);
 //		return "loginHome";
 //	}
-//	
+	
 //	@GetMapping
-//	public String homeLoginV2( Model model, HttpServletRequest request) {
-//		Member member = (Member) sessionManager.getSession(request);
-//		
-//		if(member == null) {
+//	public String homeLoginV2(Model model, HttpServletRequest request) {
+//		Member loginMember = (Member) sessionManager.getSession(request);
+//
+//		if (loginMember == null) {
+//			return "home";
+//		} else {
+//			model.addAttribute("member", loginMember);
+//			return "loginHome";
+//		}
+//	}
+	
+//	@GetMapping
+//	public String homeLoginV1(@CookieValue(name = "memberId", required = false) Long memberId, Model model) {
+//		if(memberId == null) {
 //			return "home";
 //		}
-//		
-//		model.addAttribute("member", member);
-//		return "loginHome";
-//	}
 //
-//	@GetMapping
-//  public String homeLoginV1(@CookieValue(name = "memberId", required = false) Long memberId, Model model) {
-//      if (memberId == null) {
-//          return "home";
-//      }
-//      // 로그인
-//      Member loginMember = memberRepository.findById(memberId);
-//      if (loginMember == null) {
-//          return "home";
-//      }
-//      model.addAttribute("member", loginMember);
-//      return "loginHome";
-//  }
-
+//		return memberRepository.findById(memberId)
+//				.map(loginMember -> {
+//						model.addAttribute("member", loginMember);
+//						return "loginHome";
+//					})
+//				.orElse("home");
+//	}
+	
 }
