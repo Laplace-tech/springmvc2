@@ -15,23 +15,8 @@ import lombok.ToString;
 @Builder(toBuilder = true)
 public class Item {
 
-    /**
-     * 고유 식별자 (null이면 아직 저장되지 않은 상태)
-     */
     private final Long id;
-
-    /**
-     * 상품 이름
-     */
     private final String itemName;
-
-    /**
-     * 가격
-     */
     private final Integer price;
-
-    /**
-     * 수량
-     */
     private final Integer quantity;
 }

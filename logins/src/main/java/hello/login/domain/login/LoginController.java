@@ -35,16 +35,6 @@ public class LoginController {
 		return "login/loginForm";
 	}
 	
-	@PostMapping("/logout")
-	public String logoutV3(HttpServletRequest request) {
-//		log.info("[POST /logout] 회원 로그아웃 처리 요청");
-		HttpSession session = request.getSession(false);
-		if(session != null) {
-			session.invalidate();
-		}
-		return "redirect:/";
-	}
-	
 	@PostMapping("/login")
 	public String loginV4(
 			@Validated LoginForm loginForm, BindingResult bindingResult, 
@@ -68,6 +58,16 @@ public class LoginController {
 
 //		log.info("[POST /login] redirectURL : {}", redirectURL);
 		return "redirect:" + redirectURL;
+	}
+	
+	@PostMapping("/logout")
+	public String logoutV3(HttpServletRequest request) {
+//		log.info("[POST /logout] 회원 로그아웃 처리 요청");
+		HttpSession session = request.getSession(false);
+		if(session != null) {
+			session.invalidate();
+		}
+		return "redirect:/";
 	}
 	
 //	@PostMapping("/login")
