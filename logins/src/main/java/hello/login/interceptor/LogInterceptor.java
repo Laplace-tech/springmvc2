@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /*
  * (1) 정상 흐름에서의 인터셉터 호출 순서
- *   HTTP 요청 
+ *   HTTP 요청 -> WAS -> 필터 
  * 	  -> DispatcherServlet
  * 	    -> Interceptor.preHandle() : return false 되면 postHandle(), afterCompletion() 모두 실행되지 않음
  * 	 	  -> HandlerAdapter 호출 (컨트롤러 실행)
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  * 			    -> Interceptor.afterCompletion() : 컨트롤러 실행 중, 예외가 있든 없든 항상 실행 됨 
  * 
  * (2) 예외 발생 시 흐름
- *   HTTP 요청
+ *   HTTP 요청 -> WAS -> 필터
  *     -> DispatcherServlet
  *       -> interceptor.preHandle()
  *         -> HandlerAdapter 호출 (컨트롤러 실행 중 예외 발생)
