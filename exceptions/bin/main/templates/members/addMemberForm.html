@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+	<title th:text="#{page.signup}">회원 가입</title>
+    <style>
+        .container {
+            max-width: 560px;
+        }
+
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- 페이지 제목 -->
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.signup}">회원 가입</h2>
+    </div>
+
+    <!-- 회원 가입 폼 -->
+    <form th:action="@{/members/add}" th:object="${memberForm}" method="post" novalidate>
+
+        <!-- 글로벌 오류 -->
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error"
+               th:each="error : ${#fields.globalErrors()}"
+               th:text="${error}">글로벌 오류 메시지</p>
+        </div>
+
+        <!-- 로그인 ID -->
+        <div class="mb-3">
+            <label for="loginId" class="form-label" th:text="#{label.member.loginId}">아이디</label>
+            <input type="text" id="loginId" th:field="*{loginId}" class="form-control"
+                   th:placeholder="#{placeholder.member.loginId}" th:errorclass="field-error">
+            <div class="field-error" th:errors="*{loginId}">아이디 오류 메시지</div>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="mb-3">
+            <label for="password" class="form-label" th:text="#{label.member.password}">비밀번호</label>
+            <input type="password" id="password" th:field="*{password}" class="form-control"
+                   th:placeholder="#{placeholder.member.password}" th:errorclass="field-error">
+            <div class="field-error" th:errors="*{password}">비밀번호 오류 메시지</div>
+        </div>
+
+        <!-- 이름 -->
+        <div class="mb-3">
+            <label for="name" class="form-label" th:text="#{label.member.name}">이름</label>
+            <input type="text" id="name" th:field="*{name}" class="form-control"
+                   th:placeholder="#{placeholder.member.name}" th:errorclass="field-error">
+            <div class="field-error" th:errors="*{name}">이름 오류 메시지</div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- 버튼 영역 -->
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="w-100 btn btn-primary btn-lg"
+                        th:text="#{button.register}">등록</button>
+            </div>
+            <div class="col">
+                <a th:href="@{/}" class="w-100 btn btn-secondary btn-lg"
+                   th:text="#{button.cancel}">취소</a>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
