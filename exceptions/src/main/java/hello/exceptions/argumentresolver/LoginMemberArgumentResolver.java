@@ -1,6 +1,7 @@
 package hello.exceptions.argumentresolver;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -8,15 +9,25 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import hello.exceptions.domain.member.Member;
 import hello.exceptions.session.SessionConst;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 컨트롤러 메서드 파라미터에 (@Login Member loginMember) 파라미터가 있으면
+ * [NOTE] 
+ * → ArgumentResolver는 모든 컨트롤러 메서드 파라미터에 대해 
+ * 	  supportsParameter()를 한 번씩 호출함. 
+ * → login 컨트롤러에도 파라미터가 있긴 하니, 이 과정은 정상. 
+ * → 실제로 resolveArgument()가 호출된 건 아님.
+ * → 그냥 "해당 파라미터는 내가 처리할 대상인가?"를 검사하는 단계일 뿐.
+ * 
+ * 컨트롤러 메서드 파라미터에 (@Login Member loginMember) 파라미터가 있으면 
  * 세션에서 로그인 회원 정보를 찾아 자동으로 주입해주는 ArgumentResolver
  */
 @Slf4j
+@Component
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
 	/**
@@ -26,13 +37,13 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 	 */
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		log.info("supportsParameter 실행");
-		
-		boolean hasLoginAnnotation = parameter.hasParameterAnnotation(Login.class);
-		boolean hasMemberType = Member.class.isAssignableFrom(parameter.getParameterType());
-		
-		return hasLoginAnnotation && hasMemberType;
+	    boolean hasLoginAnnotation = parameter.hasParameterAnnotation(Login.class);
+	    boolean hasMemberType = Member.class.isAssignableFrom(parameter.getParameterType());
+	    log.info("supportsParameter: parameterName={}, hasLoginAnnotation={}, hasMemberType={}",
+	            parameter.getParameterName(), hasLoginAnnotation, hasMemberType);
+	    return hasLoginAnnotation && hasMemberType;
 	}
+
 
 	/*
 	 * 2. 세션에서 로그인 회원 객체를 꺼낸다
@@ -64,7 +75,16 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 		Object loginMember = session.getAttribute(SessionConst.LOGIN_MEMBER);
 		log.info("세션에서 조회한 로그인 사용자: {}", loginMember);
 		return loginMember;
-
+	}
+	
+	@PostConstruct
+	public void init() {
+		log.info("LoginMemberArgumentResolver Initialized");
+	}
+	
+	@PreDestroy
+	public void destroy() {
+		log.info("LoginMemberArgumentsResolver Destroyed");
 	}
 
 }

@@ -13,50 +13,59 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * LogFilter
+ * 
+ * 전체 요청-응답 흐름을 로깅하는 서블릿 필터
+ * DispatcherType에 따른 요청 구분 및 예외 상황 처리 로깅 포함
+ */
 @Slf4j
 public class LogFilter implements Filter {
 
-	private static final String LOG_PREFIX = "REQUEST";
-	private static final String LOG_SUFFIX = "RESPONSE";
-	
-	// 필터가 초기화될 때 한 번만 호출됨
-	@Override
-	public void init(FilterConfig filterConfig) {
-		log.info("LogFilter initialized");
-	}
-	
-	// 모든 요청마다 호출되는 메서드
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		String requestURI = httpRequest.getRequestURI();
-		String uuid = UUID.randomUUID().toString();
-		DispatcherType dispatcherType = request.getDispatcherType();
-		
-		try {
-			logRequest(uuid, dispatcherType, requestURI);
-			chain.doFilter(request, response);
-		} catch (Exception e) {
-			log.error("Exception occured : {}", e.getMessage());
-			throw e;
-		} finally {
-			logResponse(uuid, dispatcherType, requestURI);
-		}
-	}
+    private static final String PREFIX = "REQUEST";
+    private static final String SUFFIX = "RESPONSE";
 
-	@Override
-	public void destroy() {
-		log.info("LogFilter destroyed");
-	}
-	
-	private void logRequest(String uuid, DispatcherType dispatcherType, String uri) {
-		log.info("{} [{}][{}][{}]", LOG_PREFIX, uuid, dispatcherType, uri);
-	}
-	
-	private void logResponse(String uuid, DispatcherType dispatcherType, String uri) {
-		log.info("{} [{}][{}][{}]", LOG_SUFFIX, uuid, dispatcherType, uri);
-	}
-	
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        log.info("LogFilter Initialized");
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+    	System.out.println();
+    	
+        // HttpServletRequest가 아니면 로그 없이 바로 필터 체인 진행
+        if (!(request instanceof HttpServletRequest)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String uuid = UUID.randomUUID().toString();  // 요청별 고유 ID
+        String uri = httpRequest.getRequestURI();
+        DispatcherType dispatcherType = httpRequest.getDispatcherType();
+
+        logPhase(PREFIX, uuid, dispatcherType, uri);
+
+        try {
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            // 예외 로깅 후 예외 재던지기
+            log.error("Exception during request [{}]: {}", uuid, e.toString(), e);
+            throw e;
+        } finally {
+            logPhase(SUFFIX, uuid, dispatcherType, uri);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        log.info("LogFilter Destroyed");
+    }
+
+    private void logPhase(String phase, String uuid, DispatcherType type, String uri) {
+        log.info("{} [{}][{}][{}]", phase, uuid, type, uri);
+    }
 }
