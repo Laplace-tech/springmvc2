@@ -30,13 +30,18 @@
     <ul>
         <li><strong>오류 정보</strong></li>
         <li>
-            <ul>
-                <li th:text="|timestamp: ${timestamp}|"></li>
-                <li th:text="|path: ${path}|"></li>
-                <li th:text="|status: ${status}|"></li>
-                <li th:text="|message: ${message}|"></li>
-                <li th:text="|error: ${error}|"></li>
-            </ul>
+			<ul>
+			    <li th:text="|timestamp: ${timestamp}|"></li>
+			    <li th:text="|path: ${path}|"></li>
+			    <li th:text="|status: ${status}|"></li>
+			    <li th:text="|message: ${message}|"></li>
+			    <li th:text="|error: ${error}|"></li>
+			    <li th:text="|exception: ${exception}|"></li>
+			    <li>
+			        <pre th:text="${trace}"></pre>
+			    </li>
+			</ul>
+
         </li>
     </ul>
 
