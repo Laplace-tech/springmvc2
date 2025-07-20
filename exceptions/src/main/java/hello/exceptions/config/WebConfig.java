@@ -2,7 +2,6 @@ package hello.exceptions.config;
 
 import java.util.List;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -10,13 +9,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import hello.exceptions.argumentresolver.LoginMemberArgumentResolver;
-import hello.exceptions.filter.LogFilter;
-import hello.exceptions.filter.LoginCheckFilter;
 import hello.exceptions.interceptor.LogInterceptor;
 import hello.exceptions.interceptor.LoginCheckInterceptor;
 import hello.exceptions.resolver.GlobalExceptionResolver;
-import jakarta.servlet.DispatcherType;
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 
 @Configuration  
@@ -26,13 +21,16 @@ public class WebConfig implements WebMvcConfigurer {
 	private final LoginMemberArgumentResolver loginMemberArgumentsResolver;
 	private final GlobalExceptionResolver globalExceptionResolver;
 	
+	private final LogInterceptor logInterceptor;
+	private final LoginCheckInterceptor loginCheckInterceptor;
+	
 	private final static String[] STATIC_RESOURCES = { "/css/**", "/*.ico" };
 	private final static String[] AUTH_WHITELIST = { 
 			"/", "/members/add", "/login", "/logout", 
 			"/error", "/error-page/**", "/error-test/**",
 			"/api/**"};
-	
-	
+
+
     /**
      * [스프링 MVC 설정 시, ArgumentResolver 또는 ExceptionResolver 등록 시 주의점]
      * 
@@ -60,38 +58,18 @@ public class WebConfig implements WebMvcConfigurer {
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {	
-		registry.addInterceptor(new LogInterceptor())
+		registry.addInterceptor(logInterceptor)
 				.order(1)
 				.addPathPatterns("/**")
 				.excludePathPatterns(STATIC_RESOURCES);
 		
-		registry.addInterceptor(new LoginCheckInterceptor())
+		registry.addInterceptor(loginCheckInterceptor)
 				.order(2)
 				.addPathPatterns("/**")
 				.excludePathPatterns(concatArrays(STATIC_RESOURCES, AUTH_WHITELIST));
 	}
 	
 	
-//	@Bean
-	FilterRegistrationBean<Filter> logFilter() {
-	    FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
-	    filterRegistrationBean.setFilter(new LogFilter()); // 로그 필터 등록
-	    filterRegistrationBean.setOrder(1); // 필터 순서 (먼저 실행됨)
-	    filterRegistrationBean.addUrlPatterns("/*"); // 모든 요청에 적용
-	    filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.FORWARD);
-	    return filterRegistrationBean;
-	}
-
-//	@Bean
-	FilterRegistrationBean<Filter> loginCheckFilter() {
-	    FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
-	    filterRegistrationBean.setFilter(new LoginCheckFilter()); // 로그인 체크 필터 등록
-	    filterRegistrationBean.setOrder(2); // 로그 필터 다음에 실행
-	    filterRegistrationBean.addUrlPatterns("/*"); 
-	    filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST);
-	    return filterRegistrationBean;
-	}
-
 	private String[] concatArrays(String[] a, String[] b) {
 		String[] result = new String[a.length + b.length];
 		System.arraycopy(a, 0, result, 0, a.length);
@@ -99,4 +77,27 @@ public class WebConfig implements WebMvcConfigurer {
 		return result;
 	}
 	
+//	private final LogFilter logFilter;
+//	private final LoginCheckFilter loginCheckFilter;
+//	
+//	@Bean
+//	FilterRegistrationBean<Filter> logFilterRegistration() {
+//	    FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
+//	    filterRegistrationBean.setFilter(logFilter); // 로그 필터 등록
+//	    filterRegistrationBean.setOrder(1); // 필터 순서 (먼저 실행됨)
+//	    filterRegistrationBean.addUrlPatterns("/*"); // 모든 요청에 적용
+//	    filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.FORWARD);
+//	    return filterRegistrationBean;
+//	}
+//
+//	@Bean
+//	FilterRegistrationBean<Filter> loginCheckFilterRegistration() {
+//	    FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
+//	    filterRegistrationBean.setFilter(loginCheckFilter); // 로그인 체크 필터 등록
+//	    filterRegistrationBean.setOrder(2); // 로그 필터 다음에 실행
+//	    filterRegistrationBean.addUrlPatterns("/*"); 
+//	    filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST);
+//	    return filterRegistrationBean;
+//	}
+
 } 

@@ -22,8 +22,14 @@ public class UserExceptionStrategy implements ExceptionResolverStrategy {
         return "error/400";
     }
 
+	@Override
+	public String getError() {
+		return "Bad Request";
+	}
+    
     @Override
     public String getMessage(Exception ex) {
         return ex.getMessage();
     }
+
 }

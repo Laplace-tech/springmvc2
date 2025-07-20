@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * DispatcherType에 따른 요청 구분 및 예외 상황 처리 로깅 포함
  */
 @Slf4j
+//@Component
 public class LogFilter implements Filter {
 
     private static final String PREFIX = "REQUEST";

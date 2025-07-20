@@ -19,6 +19,11 @@ public class DefaultExceptionStrategy implements ExceptionResolverStrategy {
     public String getViewName() {
         return "error/500";
     }
+    
+    @Override
+    public String getError() {
+        return "Internal Server Error";
+    }
 
     @Override
     public String getMessage(Exception ex) {

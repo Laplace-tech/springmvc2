@@ -1,5 +1,9 @@
 package hello.exceptions.resolver;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,18 +81,21 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
         ExceptionResolverStrategy selectedStrategy = strategyList.stream()
                 .filter(s -> s.supports(ex))
                 .findFirst()
-                .orElseGet(() -> new DefaultExceptionStrategy()); // 여기서만 fallback
+                .orElseGet(DefaultExceptionStrategy::new); // 여기서만 fallback
 
         log.warn("Selected ExceptionResolverStrategy: {}", selectedStrategy.getClass().getSimpleName());
 
-        // 2. 전략에서 상태 코드, 뷰 이름, 메시지 정보 추출
+        // 2. 전략에서 상태 코드, 오류, 뷰 이름, 메시지 정보 추출
         int status = selectedStrategy.getStatusCode();
+        String error = selectedStrategy.getError();
         String viewName = selectedStrategy.getViewName();
         String message = selectedStrategy.getMessage(ex);
-        log.warn("Response status: {}, ViewName: {}, Message: {}", status, viewName, message);
+        log.warn("Response : [{} {}], ViewName: {}, Message: {}", status, error, viewName, message);
 
+        Map<String, Object> errorAttributes = buildErrorAttributes(ex, request, status, message, error);
+        
         // 3. 응답 상태 코드 설정
-        response.setStatus(status);
+        response.setStatus(status);     // 3. 응답 상태 코드 설정
 
         // 4. 요청 헤더에서 Accept 정보 확인 (JSON or HTML 판단용)
         String accept = request.getHeader("Accept");
@@ -97,11 +104,7 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
         try {
             // 클라이언트가 JSON 응답을 기대할 경우 (Ajax 요청 등)
             if (accept != null && accept.contains(MediaType.APPLICATION_JSON_VALUE)) {
-                Map<String, Object> errorResult = Map.of(
-                        "exception", ex.getClass().getSimpleName(), 
-                        "message", message,
-                        "status", status);
-                String json = objectMapper.writeValueAsString(errorResult);
+                String json = objectMapper.writeValueAsString(errorAttributes);
 
                 // JSON 응답 설정
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -120,7 +123,10 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
         }
 
         log.warn("Non-JSON request, forwarding to error view: {}", viewName);
-        return new ModelAndView(viewName); // 해당 뷰로 포워딩
+        
+        ModelAndView modelAndView = new ModelAndView(viewName);
+        modelAndView.addAllObjects(errorAttributes);
+        return modelAndView; // 해당 뷰로 포워딩
     }
 
     @PostConstruct
@@ -131,5 +137,22 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
     @PreDestroy
     public void destroy() {
         log.info("GlobalExceptionResolver Destroyed");
+    }
+    
+    private Map<String, Object> buildErrorAttributes(Exception ex, HttpServletRequest request, int status, String message, String error) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", Instant.now().toString());
+        map.put("path", request.getRequestURI());
+        map.put("status", status);
+        map.put("message", message);
+        map.put("error", error);
+        map.put("exception", ex.getClass().getName());
+
+        StringWriter sw = new StringWriter();
+        ex.printStackTrace(new PrintWriter(sw));  // 콘솔 출력 없이 sw에 저장
+        String stackTrace = sw.toString();        // 문자열로 변환
+        map.put("trace", stackTrace);              // 모델에 담기
+
+        return map;
     }
 }

@@ -2,10 +2,13 @@ package hello.exceptions.interceptor;
 
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.annotation.Nullable;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -77,6 +80,7 @@ import lombok.extern.slf4j.Slf4j;
  * - DispatcherType 정보 포함
  */
 @Slf4j
+@Component
 public class LogInterceptor implements HandlerInterceptor {
 
 	private static final String PREFIX = "PRE-HANDLE";
@@ -114,5 +118,15 @@ public class LogInterceptor implements HandlerInterceptor {
 			log.error("{} - Exception occured for request [{}]", SUFFIX, logId, ex);
 		}
 	}
+	
+    @PostConstruct
+    public void init() {
+        log.info("LogInterceptor Initialized");
+    }
+
+    @PreDestroy
+    public void destroy() {
+        log.info("LogInterceptor Destroyed");
+    }
 
 }
