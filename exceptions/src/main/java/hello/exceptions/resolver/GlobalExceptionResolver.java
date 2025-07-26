@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,51 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+/**
+ * ✅ 스프링 MVC의 예외 처리 방식 요약
+ * 
+ * 1. HandlerExceptionResolver란?
+ * -------------------------------------
+ * - 스프링 MVC는 예외가 발생했을 때 DispatcherServlet이 
+ *   HandlerExceptionResolver를 통해 예외를 처리함.
+ * - 즉, 컨트롤러에서 예외가 발생해도 WAS(예: 톰캣)까지 전달되지 않고,
+ *   스프링 내부에서 예외 처리를 마무리할 수 있음.
+ *
+ * - 결과적으로 WAS 입장에서는 "정상 처리된 응답"으로 간주됨.
+ *   → HTTP 상태코드와 응답 바디 모두 스프링이 컨트롤 가능.
+ *
+ *
+ * 2. ExceptionResolver의 장점
+ * -------------------------------------
+ * - 복잡한 WAS 오류 페이지 처리 로직을 피할 수 있음.
+ * - JSON, HTML, TEXT 등 다양한 형태로 예외 응답을 구성 가능.
+ * - 예외 발생 시점에서 컨트롤러처럼 로직 제어가 가능하여 유연함.
+ * - 필터나 인터셉터 등에서 로깅을 하거나 상태 추적이 쉬움.
+ *
+ *
+ * 3. ExceptionResolver가 예외를 못 처리하면?
+ * -------------------------------------
+ * - 스프링이 response.sendError(500) 등을 호출하여 WAS에게 예외 위임.
+ * - 이후 동작 흐름:
+ *
+ *   → WAS가 등록된 오류 페이지 경로(/error 등)로 재호출
+ *   → 스프링 부트에서는 BasicErrorController가 자동 등록되어 있음
+ *   → DefaultErrorAttributes가 에러 정보를 모델에 담고
+ *   → 뷰 이름(error/500 등)에 따라 HTML 오류 페이지 렌더링됨
+ *
+ * - 하지만 이 방식은 다음과 같은 단점이 있음:
+ *   → 응답 제어가 어렵고 상황에 따라 예외 메시지가 노출될 수 있음
+ *   → JSON 등 API 응답 처리에는 적합하지 않음
+ *   → 중간에 여러 번의 디스패칭(내부 재요청)이 일어나기 때문에 복잡
+ *
+ *
+ * ✅ 결론
+ * -------------------------------------
+ * - 가능하면 ExceptionResolver 또는 @ExceptionHandler를 사용해
+ *   예외를 컨트롤러 수준에서 직접 처리하는 것이 가장 깔끔하고 확장성 높음.
+ */
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -75,11 +121,11 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
                                          Object handler,
                                          Exception ex) {
 
-        log.warn("GlobalExceptionResolver triggered : {}", ex.getClass().getSimpleName());
+        log.warn("GlobalExceptionResolver triggered : {}", ex.getClass().getName());
 
         // 1. 등록된 전략 목록 중에서 해당 예외를 처리할 수 있는 전략을 찾음
         ExceptionResolverStrategy selectedStrategy = strategyList.stream()
-                .filter(s -> s.supports(ex))
+                .filter(strategy -> strategy.supports(ex))
                 .findFirst()
                 .orElseGet(DefaultExceptionStrategy::new); // 여기서만 fallback
 
@@ -140,12 +186,12 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
     }
     
     private Map<String, Object> buildErrorAttributes(Exception ex, HttpServletRequest request, int status, String message, String error) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("timestamp", Instant.now().toString());
-        map.put("path", request.getRequestURI());
         map.put("status", status);
-        map.put("message", message);
         map.put("error", error);
+        map.put("message", message);
+        map.put("path", request.getRequestURI());
         map.put("exception", ex.getClass().getName());
 
         StringWriter sw = new StringWriter();
@@ -155,4 +201,4 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
 
         return map;
     }
-}
+} 

@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class WebConfig implements WebMvcConfigurer {
 
 	private final LoginMemberArgumentResolver loginMemberArgumentsResolver;
+	
 	private final GlobalExceptionResolver globalExceptionResolver;
 	
 	private final LogInterceptor logInterceptor;
