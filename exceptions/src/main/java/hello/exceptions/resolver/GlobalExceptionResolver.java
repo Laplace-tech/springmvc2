@@ -3,7 +3,6 @@ package hello.exceptions.resolver;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +73,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class GlobalExceptionResolver implements HandlerExceptionResolver {
 
-    /*
+    /**
      * [ExceptionResolver의 핵심 개념]
      * 
      * 컨트롤러에서 예외가 발생해도 ExceptionResolver가 예외를 처리하면,
@@ -84,6 +83,7 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
      * 예외가 서블릿 컨테이너까지 전달되면 복잡하고 불필요한 추가 프로세스가 실행될 수 있는데,
      * ExceptionResolver를 사용하면 예외 처리 흐름이 훨씬 깔끔해진다.
      * 
+     * ---------------------------------------------------------
      * 
      * [resolveException() 반환값에 따른 동작]
      * 
