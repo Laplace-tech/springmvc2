@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 목록</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>상품 목록</h2>
+    <a th:href="@{/items/add}" class="btn btn-primary mb-3">상품 등록</a>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>상품명</th>
+            <th>가격</th>
+            <th>수량</th>
+            <th>관리</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}">
+            <td th:text="${item.id}"></td>
+            <td>
+                <a th:href="@{/items/{id}(id=${item.id})}" th:text="${item.itemName}"></a>
+            </td>
+            <td th:text="${item.price}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td>
+                <a th:href="@{/items/{id}/edit(id=${item.id})}" class="btn btn-sm btn-warning">수정</a>
+                <form th:action="@{/items/{id}/delete(id=${item.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

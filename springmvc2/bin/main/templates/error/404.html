@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>404 Not Found</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8d7da;
+        }
+        .container {
+            max-width: 700px;
+            margin-top: 50px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #dc3545;
+        }
+        .error-details li {
+            margin-bottom: 5px;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 제목 -->
+    <div class="text-center mb-4">
+        <h2>🚫 404 오류 - 페이지를 찾을 수 없습니다</h2>
+        <p class="text-muted">요청하신 페이지는 존재하지 않거나 삭제되었습니다.</p>
+    </div>
+
+    <!-- 추가 안내 메시지 -->
+    <p th:if="${errorMessage}" class="fw-bold text-danger" th:text="${errorMessage}"></p>
+
+    <!-- 오류 정보 -->
+    <h5 class="mb-3">오류 정보</h5>
+    <ul class="list-unstyled error-details">
+        <li><strong>발생 시각:</strong> <span th:text="${timestamp}"></span></li>
+		<li><strong>상태 코드:</strong> <span th:text="${status}"></span></li>
+		<li><strong>에러:</strong> <span th:text="${error}"></span></li>
+		<li><strong>메시지:</strong> <span th:text="${message}"></span></li>
+        <li><strong>요청 경로:</strong> <span th:text="${path}"></span></li>
+        <li th:if="${exception}"><strong>예외 클래스:</strong> <span th:text="${exception}"></span></li>
+        <li th:if="${trace}">
+            <strong>스택 트레이스:</strong>
+            <pre th:text="${trace}"></pre>
+        </li>
+    </ul>
+
+    <!-- 홈 버튼 -->
+    <div class="text-center mt-4">
+        <a th:href="@{/}" class="btn btn-danger">홈으로 이동</a>
+    </div>
+</div>
+</body>
+</html>
