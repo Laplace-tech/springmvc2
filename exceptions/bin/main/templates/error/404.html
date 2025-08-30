@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>404 Not Found</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8d7da;
+        }
+        .container {
+            max-width: 700px;
+            margin-top: 50px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #dc3545;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="text-center mb-4">
+        <h2>🚫 404 오류 - 페이지를 찾을 수 없습니다</h2>
+        <p class="text-muted">스프링 부트 제공 오류 화면</p>
+    </div>
+
+    <div>
+        <p>요청하신 페이지는 존재하지 않거나 삭제되었습니다.</p>
+    </div>
+
+    <ul>
+        <li><strong>오류 정보</strong></li>
+        <li>
+			<ul>
+			    <li th:text="|timestamp: ${timestamp}|"></li>
+			    <li th:text="|path: ${path}|"></li>
+			    <li th:text="|status: ${status}|"></li>
+			    <li th:text="|message: ${message}|"></li>
+			    <li th:text="|error: ${error}|"></li>
+			    <li th:text="|exception: ${exception}|"></li>
+			    <li>
+			        <pre th:text="${trace}"></pre>
+			    </li>
+			</ul>
+
+        </li>
+    </ul>
+
+    <div class="text-center mt-4">
+        <a th:href="@{/}" class="btn btn-danger">홈으로 이동</a>
+    </div>
+</div>
+</body>
+</html>
