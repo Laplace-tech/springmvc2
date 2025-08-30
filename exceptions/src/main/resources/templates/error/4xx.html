@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>4xx 오류</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff3cd;
+        }
+        .container {
+            max-width: 700px;
+            margin-top: 50px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #856404;
+        }
+        p {
+            font-size: 1.1rem;
+        }
+        .btn-home {
+            background-color: #856404;
+            color: white;
+        }
+        .btn-home:hover {
+            background-color: #6c5203;
+        }
+    </style>
+</head>
+<body>
+<div class="container text-center">
+    <h2>🚧 4xx 오류 발생</h2>
+    <p class="mt-3">요청하신 페이지를 처리할 수 없습니다.<br>잘못된 요청이거나 권한이 부족할 수 있습니다.</p>
+
+    <div class="mt-4">
+        <a th:href="@{/}" class="btn btn-home">홈으로 이동</a>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="text-start">
+		<ul>
+		    <li th:text="|timestamp: ${timestamp}|"></li>
+		    <li th:text="|path: ${path}|"></li>
+		    <li th:text="|status: ${status}|"></li>
+		    <li th:text="|message: ${message}|"></li>
+		    <li th:text="|error: ${error}|"></li>
+		    <li th:text="|exception: ${exception}|"></li>
+		    <li>
+		        <pre th:text="${trace}"></pre>
+		    </li>
+		</ul>
+
+    </div>
+</div>
+</body>
+</html>
