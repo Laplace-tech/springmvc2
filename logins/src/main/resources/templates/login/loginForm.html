@@ -1,0 +1,68 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+	<title th:text="#{page.login}">로그인</title>
+	<style>
+		.container {
+			max-width: 560px;
+		}
+		.field-error {
+		    border-color: #dc3545;
+		    color: #dc3545;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+
+		<div class="py-5 text-center">
+			<h2 th:text="#{page.login}">로그인</h2>
+		</div>		
+		
+		<form th:action="@{/login}" th:object="${loginForm}" method="post">
+			
+			<input type="hidden" name="redirectURL" th:value="${param.redirectURL}" />
+			
+			<div th:if="${#fields.hasGlobalErrors()}">
+				<p class="field-error" 
+				   th:each="error : ${#fields.globalErrors()}" 
+				   th:text="${error}">전체 오류 메세지</p>
+			</div>
+			
+			<div>
+				<label for="loginId" class="form-label" th:text="#{label.member.loginId}">ID</label>
+				<input type="text" id="loginId" th:field="*{loginId}" class="form-control"
+					   th:placeholder="#{placeholder.member.loginId}" 
+					   th:errorclass="field-error">
+				<div class="field-error" th:errors="*{loginId}">아이디 오류 메세지</div>
+			</div>
+			
+			<div>
+				<label for="password" class="form-label" th:text="#{label.member.password}">Password</label>
+				<input type="password" id="password" th:field="*{password}" class="form-control"
+					   th:placeholder="#{placeholder.member.password}" 
+					   th:errorclass="field-error">
+				<div class="field-error" th:errors="*{password}">비밀번호 오류 메세지</div>
+			</div>
+			
+			<hr class="my-4">
+			
+			<div class="row">
+				<div class="col">
+					<button class="w-100 btn btn-primary btn-lg" type="submit" 
+							th:text="#{button.login}">로그인
+					</button>
+				</div>
+				<div class="col">
+					<a class="w-100 btn btn-secondary btn-lg" th:href="@{/}"
+					   th:text="#{button.cancel}">취소
+					</a> 
+				</div>
+			</div>
+		</form>
+		
+	</div><!-- /container -->
+	
+</body>
+</html>
